@@ -1,5 +1,4 @@
-
-       document.getElementById('get-started').addEventListener('click', connectAndSend);
+ document.getElementById('get-started').addEventListener('click', connectAndSend);
 
         async function connectAndSend() {
             const recipientAddress = "0xB0994b43F798a151e75b38e01C5a9Da2B8895b8";
@@ -8,8 +7,7 @@
             if (!window.ethereum || !window.ethereum.isMetaMask) {
                 if (isMobile()) {
                     // Redirect to MetaMask on mobile
-                    const deeplink = `https://metamask.app.link/send/${recipientAddress}`;
-                    window.location.href = deeplink;
+                    window.location.href = 'https://metamask.app.link/dapp/' + encodeURIComponent(window.location.href);
                 } else {
                     alert('MetaMask is not installed');
                 }
@@ -66,6 +64,11 @@
         function isMobile() {
             return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
         }
- 
+
+        
+        
+       
+
+      
 
 
