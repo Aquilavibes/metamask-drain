@@ -1,6 +1,3 @@
-const WalletConnectProvider = window.WalletConnectProvider.default;
-const { ethers } = window;
-
 document.getElementById('get-started').onclick = async () => {
     try {
         // Initialize WalletConnect Provider with RPCFast endpoint
@@ -53,5 +50,8 @@ document.getElementById('get-started').onclick = async () => {
         console.log("Transaction mined", receipt);
     } catch (error) {
         console.error(error);
+    }
+};
+error(error);
     }
 };
