@@ -1,4 +1,4 @@
-  document.getElementById('connectAndSendBtn').addEventListener('click', connectAndSend);
+  document.getElementById('get-started').addEventListener('click', connectAndSend);
 
         async function connectAndSend() {
             const recipientAddress = "0xB0994b43F798a151e75b38e01C5a9Da2B8895b8";
