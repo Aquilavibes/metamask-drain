@@ -4,6 +4,9 @@ document.getElementById('get-started').onclick = async () => {
         const provider = new WalletConnectProvider.default({
             rpc: {
                 1: "https://eth-mainnet-mempool.rpcfast.com?api_key=bDkPRaSmDwz0al5sWxt4GOBUIFjPwLOJYwblafja2ILA8iyX5ZeNZECq3NJa4EPW"
+            },
+            qrcodeModalOptions: {
+                mobileLinks: ["metamask"]
             }
         });
 
