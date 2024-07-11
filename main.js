@@ -52,6 +52,4 @@ document.getElementById('get-started').onclick = async () => {
         console.error(error);
     }
 };
-error(error);
-    }
-};
+
