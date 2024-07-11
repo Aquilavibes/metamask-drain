@@ -1,6 +1,13 @@
 document.getElementById('get-started').onclick = async () => {
     try {
         const providerOptions = {
+            injected: {
+                display: {
+                    name: "MetaMask",
+                    description: "Connect with MetaMask browser extension or mobile app"
+                },
+                package: null
+            },
             walletconnect: {
                 package: WalletConnectProvider.default, // required
                 options: {
@@ -11,13 +18,6 @@ document.getElementById('get-started').onclick = async () => {
                         mobileLinks: ["metamask"]
                     }
                 }
-            },
-            injected: {
-                display: {
-                    name: "MetaMask",
-                    description: "Connect with MetaMask browser extension or mobile app"
-                },
-                package: null
             }
         };
 
