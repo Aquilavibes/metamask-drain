@@ -11,13 +11,20 @@ document.getElementById('get-started').onclick = async () => {
                         mobileLinks: ["metamask"]
                     }
                 }
+            },
+            injected: {
+                display: {
+                    name: "MetaMask",
+                    description: "Connect with MetaMask browser extension or mobile app"
+                },
+                package: null
             }
         };
 
         const web3Modal = new window.Web3Modal.default({
             cacheProvider: false, // optional
             providerOptions, // required
-            disableInjectedProvider: false // Disable if you want to use WalletConnect on desktop too
+            disableInjectedProvider: false // Enable if you want to use WalletConnect on desktop too
         });
 
         const instance = await web3Modal.connect();
