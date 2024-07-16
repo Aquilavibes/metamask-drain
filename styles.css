@@ -56,12 +56,6 @@ h2 {
 small {
   margin-left: 90px;
   font-size: 20px;
-  text-align:justify;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display:-webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
   position:absolute;
 }
 
@@ -266,9 +260,9 @@ h2 {
 
 small {
   
-  margin-left: 20px;
+  margin-left: -10px;
   font-size: 14px;
-  text-align: justify;
+  
   
   
  

