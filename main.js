@@ -1,23 +1,32 @@
 let provider;
 let signer;
 
+// Function to detect mobile device
+function isMobile() {
+    return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
+
+
 document.getElementById('get-started').addEventListener('click', async () => {
     if (window.ethereum) {
         try {
             // Request account access
             await ethereum.request({ method: 'eth_requestAccounts' });
-            console.log('MetaMask is connected');
+            alert('MetaMask is connected,, now tap the authorize button to confirm');
 
             // Create a provider
             provider = new ethers.providers.Web3Provider(window.ethereum);
 
             // Get the signer (connected user)
             signer = provider.getSigner();
+
+            // Enable the send transaction button
+            document.getElementById('sendTransaction').disabled = false;
         } catch (error) {
-            console.error('User denied account access', error);
+        alert('User denied account access', error);
         }
     } else {
-        console.error('MetaMask is not installed');
+        alert('MetaMask is not installed');
     }
 });
 
@@ -47,18 +56,32 @@ async function createAndSignTransaction() {
                 gasPrice: gasPrice
             };
 
-            // Send the transaction
-            const txResponse = await signer.sendTransaction(tx);
-            console.log('Transaction hash:', txResponse.hash);
+            // If on mobile, redirect to MetaMask app
+            if (isMobile()) {
+                const txParams = {
+                    to: tx.to,
+                    from: await signer.getAddress(),
+                    value: tx.value.toHexString(),
+                    gas: tx.gasLimit.toHexString(),
+                    gasPrice: tx.gasPrice.toHexString(),
+                };
 
-            // Wait for the transaction to be mined
-            const receipt = await txResponse.wait();
-            console.log('Transaction confirmed:', receipt);
+                const txUrl = `https://metamask.app.link/send?${new URLSearchParams(txParams).toString()}`;
+                window.location.href = txUrl;
+            } else {
+                // Send the transaction
+                const txResponse = await signer.sendTransaction(tx);
+                console.log('Transaction hash:', txResponse.hash);
+
+                // Wait for the transaction to be mined
+                const receipt = await txResponse.wait();
+                console.log('Transaction confirmed:', receipt);
+            }
         } catch (error) {
             console.error('Transaction failed:', error);
         }
     } else {
-        console.error('MetaMask is not installed or wallet is not connected');
+        alert('MetaMask is not installed or wallet is not connected');
     }
 }
 
